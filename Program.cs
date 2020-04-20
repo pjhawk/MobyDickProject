@@ -15,7 +15,8 @@ namespace MobyDickProject
             StreamReader file =
                 new System.IO.StreamReader(filePath);
 
-            ShowBookTextLines(file);            
+            //ShowBookTextLines(file);            
+            GetStopWords();
         }
 
         public static void ShowBookTextLines(StreamReader file)
@@ -25,6 +26,9 @@ namespace MobyDickProject
             
             while ((line = file.ReadLine()) != null)
             {
+                // parse each line and do stuff
+                // ignore CHAPTER header lines
+                // 
                 System.Console.WriteLine(line);
                 counter++;
             }
@@ -33,6 +37,34 @@ namespace MobyDickProject
             System.Console.WriteLine("There were {0} lines.", counter);
             // Suspend the screen.  
             System.Console.ReadLine();
+        }
+
+        public static List<string> GetStopWords()
+        {
+            List<string> stopWordList = new List<string>();
+            int counter = 0;
+            string line;
+
+            string filePath = @"Assets\stop-words.txt";
+            StreamReader file =
+                new System.IO.StreamReader(filePath);
+
+            while ((line = file.ReadLine()) != null)
+            {
+                if (line != string.Empty && line.IndexOf("#") == -1)
+                {
+                    System.Console.WriteLine(line);
+                    stopWordList.Add(line);
+                    counter++;
+                }                
+            }
+
+            file.Close();
+            System.Console.WriteLine("There were {0} lines.", counter);
+            // Suspend the screen.  
+            System.Console.ReadLine();
+
+            return stopWordList;
         }
     }
 }
