@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace MobyDickProject
 {
+    static class Globals
+    {
+        public static List<string> wordList = new List<string>();
+    }
     class Program
     {
         static void Main(string[] args)
@@ -21,25 +25,26 @@ namespace MobyDickProject
         public static void ParseBook(StreamReader file)
         {
             int counter = 0;
-            string line;
+            string line;            
                         
             while ((line = file.ReadLine()) != null)
             {
                 // ignore CHAPTER header lines
-                if (line.Length > 0 && line.ToUpper().Substring(0, 7) != "CHAPTER")
+                if (line.Length > 6 && line.ToUpper().Substring(0, 7) != "CHAPTER")
                 {
                     // parse each line and do stuff
                     ParseLine(line);
 
-                    System.Console.WriteLine(line);
+                    Console.WriteLine(line);
                     counter++;
                 }
             }
 
             file.Close();
-            System.Console.WriteLine("There were {0} lines.", counter);
+            Console.WriteLine("There were {0} lines.", counter);
             // Suspend the screen.  
-            System.Console.ReadLine();
+            Console.WriteLine("There are {0} words in the book.", Globals.wordList.Count);
+            Console.ReadLine();
         }
 
         public static List<string> GetStopWords()
@@ -56,16 +61,16 @@ namespace MobyDickProject
             {
                 if (line != string.Empty && line.IndexOf("#") == -1)
                 {
-                    System.Console.WriteLine(line);
+                    Console.WriteLine(line);
                     stopWordList.Add(line);
                     counter++;
                 }                
             }
 
             file.Close();
-            System.Console.WriteLine("There were {0} lines.", counter);
+            Console.WriteLine("There were {0} lines.", counter);
             // Suspend the screen.  
-            System.Console.ReadLine();
+            Console.ReadLine();
 
             return stopWordList;
         }
@@ -74,17 +79,18 @@ namespace MobyDickProject
         {
             char[] delimiterChars = { ' ', ',', '.', ':', '\t', (char)0x2014 };
 
-            System.Console.WriteLine($"Line text: '{line}'");
+            // Console.WriteLine($"Line text: '{line}'");
 
             string[] words = line.Split(delimiterChars,StringSplitOptions.RemoveEmptyEntries);
-            System.Console.WriteLine($"{words.Length} words in text:");
+            //Console.WriteLine($"{words.Length} words in text:");
 
             foreach (var word in words)
             {
-                System.Console.WriteLine($"{word}");
+                Globals.wordList.Add(word);
+                Console.WriteLine($"{word}");
             }
 
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }
