@@ -10,19 +10,19 @@ namespace MobyDickProject
     static class Globals
     {
         public static List<string> wordList = new List<string>();
-        public static List<string> distictWordList = new List<string>();
+        public static List<string> stopWordList = new List<string>();
     }
     class Program
     {
         static void Main(string[] args)
         {
+            PopulateStopWords();
+
             string filePath = @"Assets\mobydick-chapter-text.txt";
             StreamReader file =
                 new System.IO.StreamReader(filePath);
 
             ParseBook(file);
-
-            GetDistinctList(Globals.wordList);
 
             CountDistinct();
 
@@ -47,15 +47,14 @@ namespace MobyDickProject
             }
 
             file.Close();
-            Console.WriteLine("There were {0} lines.", counter);
+            //Console.WriteLine("There were {0} lines.", counter);
+            //Console.WriteLine("There are {0} words in the book.", Globals.wordList.Count);
             // Suspend the screen.  
-            Console.WriteLine("There are {0} words in the book.", Globals.wordList.Count);
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
-        public static List<string> GetStopWords()
+        public static void PopulateStopWords()
         {
-            List<string> stopWordList = new List<string>();
             int counter = 0;
             string line;
 
@@ -67,23 +66,21 @@ namespace MobyDickProject
             {
                 if (line != string.Empty && line.IndexOf("#") == -1)
                 {
-                    Console.WriteLine(line);
-                    stopWordList.Add(line);
+                    //Console.WriteLine(line);
+                    Globals.stopWordList.Add(line.ToLower());
                     counter++;
                 }                
             }
 
             file.Close();
-            Console.WriteLine("There were {0} lines.", counter);
+            //Console.WriteLine("There were {0} lines.", counter);
             // Suspend the screen.  
-            Console.ReadLine();
-
-            return stopWordList;
+            //Console.ReadLine();
         }
 
         public static void ParseLine(string line)
         {
-            char[] delimiterChars = { ' ', ',', '.', '?', ';', '!', ':', '\t', (char)0x2014 };
+            char[] delimiterChars = { ' ', ',', '.', '?', '!', ';',  ':', '\'', '“', '”', '(', ')', '\"', '*', '‘', '’', '[', ']', '\t', (char)0x2014 };
 
             // Console.WriteLine($"Line text: '{line}'");
 
@@ -92,31 +89,24 @@ namespace MobyDickProject
 
             foreach (var word in words)
             {
-                Globals.wordList.Add(word.ToLower());
-                //Console.WriteLine($"{word}");
+                if (!Globals.stopWordList.Contains(word.ToLower()))
+                {
+                    Globals.wordList.Add(word.ToLower());
+                    //Console.WriteLine($"{word}");
+                }
             }
 
             //Console.ReadLine();
         }
 
-        public static void GetDistinctList(List<string> list)
-        {
-            IEnumerable<string> distinctWords = list.Distinct();
-
-            foreach (string word in distinctWords)
-            {
-                Globals.distictWordList.Add(word);
-            }
-        }
-
         public static void CountDistinct()
         {
-            Globals.distictWordList.Sort();
-
-            foreach (string word in Globals.distictWordList)
+            var topWords = Globals.wordList.GroupBy(s => s).OrderByDescending(g => g.Count()).Take(100);
+            int i = 1;
+            foreach (var grp in topWords)
             {
-                int count = Globals.wordList.Where(x => x.Equals(word)).Count();
-                Console.WriteLine("{0} occurs {1} times in Moby Dick.", word, count);
+                Console.WriteLine("{0}: {1} ({2})", i, grp.Key, grp.Count());
+                i++;
             }
 
             Console.ReadLine();
