@@ -19,38 +19,30 @@ namespace MobyDickProject
             PopulateStopWords();
 
             string filePath = @"Assets\mobydick-chapter-text.txt";
+            ParseBook(filePath);
+
+            ShowTopWords(100);
+        }
+
+        public static void ParseBook(string filePath)
+        {
+            int counter = 0;
+            string line;
+
             StreamReader file =
                 new System.IO.StreamReader(filePath);
 
-            ParseBook(file);
-
-            CountDistinct();
-
-        }
-
-        public static void ParseBook(StreamReader file)
-        {
-            int counter = 0;
-            string line;            
-                        
             while ((line = file.ReadLine()) != null)
             {
                 // ignore CHAPTER header lines
                 if (line.Length > 6 && line.ToUpper().Substring(0, 7) != "CHAPTER")
                 {
-                    // parse each line and do stuff
                     ParseLine(line);
-
-                    //Console.WriteLine(line);
                     counter++;
                 }
             }
 
-            file.Close();
-            //Console.WriteLine("There were {0} lines.", counter);
-            //Console.WriteLine("There are {0} words in the book.", Globals.wordList.Count);
-            // Suspend the screen.  
-            //Console.ReadLine();
+            file.Close();            
         }
 
         public static void PopulateStopWords()
@@ -64,44 +56,43 @@ namespace MobyDickProject
 
             while ((line = file.ReadLine()) != null)
             {
-                if (line != string.Empty && line.IndexOf("#") == -1)
+                // stop words file has some comments at the top that start with a #
+                // and includes a blank line between each word
+                // ignore these lines
+                if (line != string.Empty && line.Substring(0,1) != "#")
                 {
-                    //Console.WriteLine(line);
                     Globals.stopWordList.Add(line.ToLower());
                     counter++;
                 }                
             }
 
             file.Close();
-            //Console.WriteLine("There were {0} lines.", counter);
-            // Suspend the screen.  
-            //Console.ReadLine();
         }
 
         public static void ParseLine(string line)
         {
+            // create an array of common char delmiters
             char[] delimiterChars = { ' ', ',', '.', '?', '!', ';',  ':', '\'', '“', '”', '(', ')', '\"', '*', '‘', '’', '[', ']', '\t', (char)0x2014 };
 
-            // Console.WriteLine($"Line text: '{line}'");
-
-            string[] words = line.Split(delimiterChars,StringSplitOptions.RemoveEmptyEntries);
-            //Console.WriteLine($"{words.Length} words in text:");
+            // parse line into an array of words
+            string[] words = line.Split(delimiterChars,StringSplitOptions.RemoveEmptyEntries);            
 
             foreach (var word in words)
             {
+                // check if word exists in stop word list
+                // if not add it to the word list
                 if (!Globals.stopWordList.Contains(word.ToLower()))
                 {
-                    Globals.wordList.Add(word.ToLower());
-                    //Console.WriteLine($"{word}");
+                    Globals.wordList.Add(word.ToLower());                    
                 }
             }
-
-            //Console.ReadLine();
         }
 
-        public static void CountDistinct()
+        public static void ShowTopWords(int limit)
         {
-            var topWords = Globals.wordList.GroupBy(s => s).OrderByDescending(g => g.Count()).Take(100);
+            // group word list by distict words and sort by count is desc order
+            // then select the number of groups passed to the function
+            var topWords = Globals.wordList.GroupBy(s => s).OrderByDescending(g => g.Count()).Take(limit);
             int i = 1;
             foreach (var grp in topWords)
             {
