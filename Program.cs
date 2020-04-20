@@ -15,22 +15,25 @@ namespace MobyDickProject
             StreamReader file =
                 new System.IO.StreamReader(filePath);
 
-            //ShowBookTextLines(file);            
-            GetStopWords();
+            ParseBook(file);                        
         }
 
-        public static void ShowBookTextLines(StreamReader file)
+        public static void ParseBook(StreamReader file)
         {
             int counter = 0;
             string line;
-            
+                        
             while ((line = file.ReadLine()) != null)
             {
-                // parse each line and do stuff
                 // ignore CHAPTER header lines
-                // 
-                System.Console.WriteLine(line);
-                counter++;
+                if (line.Length > 0 && line.ToUpper().Substring(0, 7) != "CHAPTER")
+                {
+                    // parse each line and do stuff
+                    ParseLine(line);
+
+                    System.Console.WriteLine(line);
+                    counter++;
+                }
             }
 
             file.Close();
@@ -65,6 +68,23 @@ namespace MobyDickProject
             System.Console.ReadLine();
 
             return stopWordList;
+        }
+
+        public static void ParseLine(string line)
+        {
+            char[] delimiterChars = { ' ', ',', '.', ':', '\t', (char)0x2014 };
+
+            System.Console.WriteLine($"Line text: '{line}'");
+
+            string[] words = line.Split(delimiterChars,StringSplitOptions.RemoveEmptyEntries);
+            System.Console.WriteLine($"{words.Length} words in text:");
+
+            foreach (var word in words)
+            {
+                System.Console.WriteLine($"{word}");
+            }
+
+            Console.ReadLine();
         }
     }
 }
