@@ -23,6 +23,9 @@ namespace MobyDickProject
             ParseBook(file);
 
             GetDistinctList(Globals.wordList);
+
+            CountDistinct();
+
         }
 
         public static void ParseBook(StreamReader file)
@@ -80,7 +83,7 @@ namespace MobyDickProject
 
         public static void ParseLine(string line)
         {
-            char[] delimiterChars = { ' ', ',', '.', ':', '\t', (char)0x2014 };
+            char[] delimiterChars = { ' ', ',', '.', '?', ';', '!', ':', '\t', (char)0x2014 };
 
             // Console.WriteLine($"Line text: '{line}'");
 
@@ -89,7 +92,7 @@ namespace MobyDickProject
 
             foreach (var word in words)
             {
-                Globals.wordList.Add(word);
+                Globals.wordList.Add(word.ToLower());
                 //Console.WriteLine($"{word}");
             }
 
@@ -104,6 +107,19 @@ namespace MobyDickProject
             {
                 Globals.distictWordList.Add(word);
             }
+        }
+
+        public static void CountDistinct()
+        {
+            Globals.distictWordList.Sort();
+
+            foreach (string word in Globals.distictWordList)
+            {
+                int count = Globals.wordList.Where(x => x.Equals(word)).Count();
+                Console.WriteLine("{0} occurs {1} times in Moby Dick.", word, count);
+            }
+
+            Console.ReadLine();
         }
     }
 }
