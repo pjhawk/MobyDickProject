@@ -50,7 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\mobydick-chapter-text.txt" />
+    <Content Include="Assets\mobydick-chapter-text.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\mobydick-original.txt" />
     <Content Include="Assets\stop-words.txt" />
   </ItemGroup>
