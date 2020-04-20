@@ -72,7 +72,8 @@ namespace MobyDickProject
         public static void ParseLine(string line)
         {
             // create an array of common char delmiters
-            char[] delimiterChars = { ' ', ',', '.', '?', '!', ';',  ':', '\'', '“', '”', '(', ')', '\"', '*', '‘', '’', '[', ']', '\t', (char)0x2014 };
+            char emDash = (char)0x2014;
+            char[] delimiterChars = { ' ', ',', '.', '?', '!', ';',  ':', '\'', '“', '”', '(', ')', '\"', '*', '‘', '’', '[', ']', '\t', emDash };
 
             // parse line into an array of words
             string[] words = line.Split(delimiterChars,StringSplitOptions.RemoveEmptyEntries);            
