@@ -10,6 +10,7 @@ namespace MobyDickProject
     static class Globals
     {
         public static List<string> wordList = new List<string>();
+        public static List<string> distictWordList = new List<string>();
     }
     class Program
     {
@@ -19,7 +20,9 @@ namespace MobyDickProject
             StreamReader file =
                 new System.IO.StreamReader(filePath);
 
-            ParseBook(file);                        
+            ParseBook(file);
+
+            GetDistinctList(Globals.wordList);
         }
 
         public static void ParseBook(StreamReader file)
@@ -35,7 +38,7 @@ namespace MobyDickProject
                     // parse each line and do stuff
                     ParseLine(line);
 
-                    Console.WriteLine(line);
+                    //Console.WriteLine(line);
                     counter++;
                 }
             }
@@ -87,10 +90,20 @@ namespace MobyDickProject
             foreach (var word in words)
             {
                 Globals.wordList.Add(word);
-                Console.WriteLine($"{word}");
+                //Console.WriteLine($"{word}");
             }
 
             //Console.ReadLine();
+        }
+
+        public static void GetDistinctList(List<string> list)
+        {
+            IEnumerable<string> distinctWords = list.Distinct();
+
+            foreach (string word in distinctWords)
+            {
+                Globals.distictWordList.Add(word);
+            }
         }
     }
 }
